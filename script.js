@@ -119,7 +119,15 @@ class ATMSystem {
         const currencyText = this.currentCurrency === 'yen' ? '円' : 'マカイドル';
 
         document.getElementById('balance').textContent = balance;
-        document.getElementById('currency').textContent = currencyText;
+        const currencyElement = document.getElementById('currency');
+        currencyElement.textContent = currencyText;
+
+        // マカイドルの場合はフォントサイズを半分に
+        if (this.currentCurrency === 'makai') {
+            currencyElement.style.fontSize = '50px';
+        } else {
+            currencyElement.style.fontSize = '100px';
+        }
     }
 
     toggleCurrency() {
@@ -137,7 +145,7 @@ class ATMSystem {
 
     generateBalanceButtons() {
         const grid = document.getElementById('balance-buttons-grid');
-        
+
         // 指定された残高設定値
         const balanceSettings = [
             { yen: 1, makai: 0 },
@@ -157,18 +165,18 @@ class ATMSystem {
         balanceSettings.forEach((setting, index) => {
             const button = document.createElement('button');
             button.className = 'balance-setting-btn';
-            
+
             if (setting.makai > 0) {
                 button.textContent = `${setting.makai}マカイドル`;
             } else {
                 button.textContent = `${setting.yen}円`;
             }
-            
+
             button.addEventListener('click', () => {
                 this.setBalance(setting.yen, setting.makai);
                 this.hideBalanceSetting();
             });
-            
+
             grid.appendChild(button);
         });
     }
