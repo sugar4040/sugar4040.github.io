@@ -150,7 +150,8 @@ class ATMSystem {
             { yen: 13634, makai: 0 },
             { yen: 13332, makai: 0 },
             { yen: 13334, makai: 0 },
-            { yen: 0, makai: 4444 }
+            { yen: 0, makai: 4444 },
+            { yen: 0, makai: 3344 }
         ];
 
         balanceSettings.forEach((setting, index) => {
