@@ -86,7 +86,7 @@ body {
 
 .number-display {
     position: absolute;
-    right: 10px;
+    right: 2px;
     bottom: 2%;
     transform: rotate(90deg) translateY(50%);
     transform-origin: right center;
