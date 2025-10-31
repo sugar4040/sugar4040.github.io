@@ -1,7 +1,7 @@
 class ATMSystem {
     constructor() {
-        this.balanceYen = 299999999; // 円の残高
-        this.balanceMakai = 666; // マカイドルの残高
+        this.balanceYen = 1; // 円の残高
+        this.balanceMakai = 0; // マカイドルの残高
         this.currentCurrency = 'yen'; // 'yen' または 'makai'
         this.currentAction = null; // 'withdraw' または 'deposit'
         this.init();
@@ -124,7 +124,7 @@ class ATMSystem {
 
         // マカイドルの場合はフォントサイズを半分に
         if (this.currentCurrency === 'makai') {
-            currencyElement.style.fontSize = '50px';
+            currencyElement.style.fontSize = '75px';
         } else {
             currencyElement.style.fontSize = '100px';
         }
