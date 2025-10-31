@@ -124,7 +124,7 @@ class ATMSystem {
 
         // マカイドルの場合はフォントサイズを半分に
         if (this.currentCurrency === 'makai') {
-            currencyElement.style.fontSize = '79px';
+            currencyElement.style.fontSize = '811px';
         } else {
             currencyElement.style.fontSize = '100px';
         }
