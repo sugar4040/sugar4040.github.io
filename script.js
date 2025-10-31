@@ -152,7 +152,7 @@ class ATMSystem {
             { yen: 0, makai: 0 },
             { yen: 30000, makai: 0 },
             { yen: 200, makai: 0 },
-            { yen: 137, makai: 0 },
+            { yen: 135, makai: 0 },
             { yen: 132, makai: 0 },
             { yen: 13632, makai: 0 },
             { yen: 13634, makai: 0 },
