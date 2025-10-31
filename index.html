@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATM System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="atm-container">
+        <!-- メイン画面 -->
+        <div id="main-screen" class="screen active">
+            <div class="date-display" id="date-display">2025年10月30日</div>
+            <div class="number-display" id="number-display">No.98765432</div>
+            <div class="balance-display">
+                <span id="balance">0</span><span id="currency" class="currency-unit">円</span>
+            </div>
+            <div class="button-container">
+                <button id="withdraw-btn" class="action-btn withdraw">引出</button>
+                <button id="deposit-btn" class="action-btn deposit">預入</button>
+            </div>
+        </div>
+
+        <!-- 金額選択画面 -->
+        <div id="amount-screen" class="screen">
+            <div class="amount-grid" id="amount-grid">
+                <!-- 数字ボタンはJavaScriptで生成 -->
+            </div>
+            <button id="back-btn" class="back-btn">戻る</button>
+        </div>
+
+        <!-- ポップアップ -->
+        <div id="popup-overlay" class="popup-overlay">
+            <div class="popup-content">
+                <button id="close-popup" class="close-btn">×</button>
+                <img src="images/残り.png" alt="残り" class="popup-image">
+            </div>
+        </div>
+
+        <!-- 残高設定画面 -->
+        <div id="balance-setting-overlay" class="popup-overlay">
+            <div class="balance-setting-content">
+                <button id="close-balance-setting" class="close-btn">×</button>
+                <h2>残高設定</h2>
+                <div class="balance-buttons-grid" id="balance-buttons-grid">
+                    <!-- 残高設定ボタンはJavaScriptで生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
