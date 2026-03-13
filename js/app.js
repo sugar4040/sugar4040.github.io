@@ -453,6 +453,10 @@ function handleMoveForward() {
       questionManager.markRouteCompleted(currentQuestion.route);
     }
     
+    // 現在の問題を完了済みとしてマーク
+    const currentIndex = questionManager.getCurrentQuestionIndex();
+    questionManager.markQuestionCompleted(currentIndex);
+    
     // 両方のルートが完了している場合は最終問題へ
     if (questionManager.areBothRoutesCompleted()) {
       const finalQuestionIndex = questionManager.questions.findIndex(q => q.requiresBothRoutes === true);
@@ -488,6 +492,10 @@ function handleMoveForward() {
       showFeedback('error', '数字が正しくありません');
       return;
     }
+    
+    // 現在の問題を完了済みとしてマーク
+    const currentIndex = questionManager.getCurrentQuestionIndex();
+    questionManager.markQuestionCompleted(currentIndex);
     
     // 分岐処理（問題5の場合）
     if (currentQuestion.nextQuestion) {
@@ -592,17 +600,23 @@ function showQuestionSelectionModal() {
     
     if (i === currentIndex) {
       questionItem.classList.add('current');
+      // 現在の問題は「現在の問題」と表示
+      questionItem.textContent = '現在の問題';
+      questionItem.setAttribute('aria-label', '現在の問題');
+    } else if (questionManager.isQuestionCompleted(i)) {
+      // 完了済みの問題は「番号: 答え」と表示
+      const katakanaAnswer = hiraganaToKatakana(question.answer);
+      questionItem.textContent = `${i + 1}: ${katakanaAnswer}`;
+      questionItem.setAttribute('aria-label', `問題${i + 1}、${katakanaAnswer}に移動`);
+    } else {
+      // 未完了の問題（現在の問題より前で進むボタンが押されていない）
+      questionItem.textContent = `問題${i + 1}`;
+      questionItem.setAttribute('aria-label', `問題${i + 1}に移動`);
     }
     
-    // 答えをカタカナに変換
-    const katakanaAnswer = hiraganaToKatakana(question.answer);
-    
-    // 表示テキストを「問題番号: 答え」の形式にする
-    questionItem.textContent = `${i + 1}: ${katakanaAnswer}`;
     questionItem.setAttribute('data-index', i);
     questionItem.setAttribute('role', 'button');
     questionItem.setAttribute('tabindex', '0');
-    questionItem.setAttribute('aria-label', `問題${i + 1}、${katakanaAnswer}に移動`);
     
     // クリックイベント
     questionItem.addEventListener('click', () => {

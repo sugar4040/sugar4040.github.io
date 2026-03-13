@@ -92,7 +92,7 @@
     {
       "id": "q11_route1",
       "question": "問題11（ルート1最終）",
-      "answer": "ないぶん",
+      "answer": "せいれん",
       "numberAnswer": null,
       "route": "route1",
       "isFinal": true,
@@ -129,7 +129,7 @@
     {
       "id": "q9_route2",
       "question": "問題9（ルート2最終）",
-      "answer": "せいれん",
+      "answer": "ないぶん",
       "numberAnswer": null,
       "route": "route2",
       "isFinal": true,

@@ -12,6 +12,7 @@ export class QuestionManager {
     this.completedRoutes = new Set(); // 完了したルートを記録
     this.answeredQuestions = new Map(); // 問題インデックス -> カタカナ答え
     this.routeFinalAnswers = new Map(); // ルート名 -> 最終問題の答え
+    this.completedQuestions = new Set(); // 進むボタンが押された問題のインデックス
   }
 
   /**
@@ -77,6 +78,23 @@ export class QuestionManager {
       return this.routeFinalAnswers.get('route2');
     }
     return null;
+  }
+
+  /**
+   * 問題を完了済みとしてマーク（進むボタンが押された）
+   * @param {number} questionIndex - 問題インデックス
+   */
+  markQuestionCompleted(questionIndex) {
+    this.completedQuestions.add(questionIndex);
+  }
+
+  /**
+   * 問題が完了済みかチェック（進むボタンが押されたか）
+   * @param {number} questionIndex - 問題インデックス
+   * @returns {boolean} 完了済みの場合true
+   */
+  isQuestionCompleted(questionIndex) {
+    return this.completedQuestions.has(questionIndex);
   }
 
   /**
