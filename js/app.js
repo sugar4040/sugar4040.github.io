@@ -512,7 +512,6 @@ function handleMoveForward() {
   } else {
     // 全問題完了
     console.log('全ての問題が完了しました');
-    showFeedback('success', 'すべての問題が完了しました！');
   }
 }
 
