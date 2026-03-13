@@ -1,0 +1,147 @@
+{
+  "eventId": "nazikan2026",
+  "eventTitle": "謎キャン2026",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "問題1",
+      "answer": "りーす",
+      "numberAnswer": ["スリー"],
+      "hint": "問題1のヒント"
+    },
+    {
+      "id": "q2",
+      "question": "問題2",
+      "answer": "しんさ",
+      "numberAnswer": ["サン+シ", "シ+サン"],
+      "hint": "問題2のヒント"
+    },
+    {
+      "id": "q3",
+      "question": "問題3",
+      "answer": "れいんぶーつ",
+      "numberAnswer": ["ツー+イレブン", "イレブン+ツー"],
+      "hint": "問題3のヒント"
+    },
+    {
+      "id": "q4",
+      "question": "問題4",
+      "answer": "しんわ",
+      "numberAnswer": ["ワン+シ", "シ+ワン"],
+      "hint": "問題4のヒント"
+    },
+    {
+      "id": "q5",
+      "question": "問題5（分岐点）",
+      "answer": "にゅうじ",
+      "numberAnswer": ["ニ+ジュウ", "ジュウ+ニ", "ジュウニ", "ニジュウ"],
+      "nextQuestion": {
+        "ニ+ジュウ": "q6_route1",
+        "ジュウ+ニ": "q6_route1",
+        "ジュウニ": "q6_route1",
+        "ニジュウ": "q6_route2"
+      },
+      "hint": "問題5のヒント"
+    },
+    {
+      "id": "q6_route1",
+      "question": "問題6（ルート1）",
+      "answer": "さいれん",
+      "numberAnswer": ["サン+レイ", "レイ+サン"],
+      "route": "route1",
+      "hint": "問題6のヒント"
+    },
+    {
+      "id": "q7_route1",
+      "question": "問題7（ルート1）",
+      "answer": "しいれ",
+      "numberAnswer": ["シ+レイ", "レイ+シ"],
+      "route": "route1",
+      "hint": "問題7のヒント"
+    },
+    {
+      "id": "q8_route1",
+      "question": "問題8（ルート1）",
+      "answer": "せぶんいれぶん",
+      "numberAnswer": ["セブン+イレブン", "イレブン+セブン"],
+      "route": "route1",
+      "hint": "問題8のヒント"
+    },
+    {
+      "id": "q9_route1",
+      "question": "問題9（ルート1）",
+      "answer": "しろくじちゅう",
+      "numberAnswer": [
+        "ジュウロク+シチ", "シチ+ジュウロク",
+        "ジュウシチ+ロク", "ロク+ジュウシチ",
+        "ジュウ+ロク+シチ", "ジュウ+シチ+ロク",
+        "ロク+ジュウ+シチ", "ロク+シチ+ジュウ",
+        "シチ+ジュウ+ロク", "シチ+ロク+ジュウ"
+      ],
+      "route": "route1",
+      "hint": "問題9のヒント"
+    },
+    {
+      "id": "q10_route1",
+      "question": "問題10（ルート1）",
+      "answer": "ちい",
+      "numberAnswer": ["イチ"],
+      "route": "route1",
+      "hint": "問題10のヒント"
+    },
+    {
+      "id": "q11_route1",
+      "question": "問題11（ルート1最終）",
+      "answer": "ないぶん",
+      "numberAnswer": null,
+      "route": "route1",
+      "isFinal": true,
+      "hint": "問題11のヒント"
+    },
+    {
+      "id": "q6_route2",
+      "question": "問題6（ルート2）",
+      "answer": "くしろ",
+      "numberAnswer": ["シ+ロク", "ロク+シ"],
+      "route": "route2",
+      "hint": "問題6のヒント"
+    },
+    {
+      "id": "q7_route2",
+      "question": "問題7（ルート2）",
+      "answer": "とえい",
+      "numberAnswer": ["エイト"],
+      "route": "route2",
+      "hint": "問題7のヒント"
+    },
+    {
+      "id": "q8_route2",
+      "question": "問題8（ルート2）",
+      "answer": "ないしんてん",
+      "numberAnswer": [
+        "ナイン+シ+テン", "ナイン+テン+シ",
+        "シ+ナイン+テン", "シ+テン+ナイン",
+        "テン+ナイン+シ", "テン+シ+ナイン"
+      ],
+      "route": "route2",
+      "hint": "問題8のヒント"
+    },
+    {
+      "id": "q9_route2",
+      "question": "問題9（ルート2最終）",
+      "answer": "せいれん",
+      "numberAnswer": null,
+      "route": "route2",
+      "isFinal": true,
+      "hint": "問題9のヒント"
+    },
+    {
+      "id": "q_final",
+      "question": "最終問題",
+      "answer": "special",
+      "numberAnswer": ["マイナスセン+イレブン", "イレブン+マイナスセン"],
+      "requiresBothRoutes": true,
+      "hint": "最終問題のヒント"
+    }
+  ]
+}

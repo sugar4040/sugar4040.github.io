@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="謎キャン2026 - カタカナ謎解きシステム">
+  <title>謎キャン2026</title>
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <!-- Main Container -->
+  <div class="app-container">
+    <!-- Top Section: Number Input and Controls -->
+    <div class="top-section">
+      <div 
+        id="number-input" 
+        class="number-input" 
+        role="textbox"
+        aria-label="数字入力欄"
+        aria-readonly="true"
+      ></div>
+      <div class="move-forward-container">
+        <span 
+          id="kana-ma" 
+          class="clickable-kana" 
+          data-kana="マ"
+          role="button" 
+          tabindex="0"
+          aria-label="マをタップして数字入力欄に追加"
+        >
+          マ
+        </span>
+        <span 
+          id="kana-su" 
+          class="clickable-kana" 
+          data-kana="ス"
+          role="button" 
+          tabindex="0"
+          aria-label="スをタップして数字入力欄に追加"
+        >
+          ス
+        </span>
+        <button 
+          id="move-forward-btn" 
+          class="move-forward-btn" 
+          aria-label="進む"
+        >
+          進む
+        </button>
+      </div>
+    </div>
+    
+    <!-- Answer Display Area -->
+    <div 
+      id="answer-display" 
+      class="answer-display" 
+      role="button" 
+      tabindex="0"
+      aria-label="答え表示エリア。タップして五十音表を開く"
+    >
+      <p class="answer-text" id="answer-text">回答を入力</p>
+      <button 
+        id="add-separator-btn" 
+        class="separator-btn hidden" 
+        aria-label="区切りを追加"
+      >
+        +
+      </button>
+    </div>
+    <button 
+        id="move-back-btn" 
+        class="move-back-btn" 
+        aria-label="戻る"
+      >
+        戻る
+      </button>
+    <!-- Kana Input Modal -->
+    <div id="kana-modal" class="kana-modal hidden" role="dialog" aria-modal="true" aria-labelledby="kana-modal-title">
+      <div class="kana-modal-content">
+        <h2 id="kana-modal-title" class="visually-hidden">五十音表</h2>
+        
+        <!-- Answer Input Area -->
+        <div class="answer-input-area">
+          <input 
+            type="text" 
+            id="kana-input" 
+            class="kana-input" 
+            readonly 
+            placeholder="カタカナで入力"
+            aria-label="カタカナ入力欄"
+          >
+          <button 
+            id="backspace-btn" 
+            class="backspace-btn" 
+            aria-label="一文字削除"
+          >
+            ←
+          </button>
+          <button 
+            id="close-modal-btn" 
+            class="close-modal-btn-inline" 
+            aria-label="閉じる"
+          >
+            ×
+          </button>
+        </div>
+        
+        <!-- Kana Grid -->
+        <div class="kana-grid" role="group" aria-label="五十音表">
+          
+          <!-- わ行 -->
+          <div class="kana-column">
+            <button class="kana-btn" data-kana="わ" aria-label="わ">わ</button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn" data-kana="を" aria-label="を">を</button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn" data-kana="ん" aria-label="ん">ん</button>
+            <button class="kana-btn" data-kana="ー" aria-label="ー">ー</button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+          </div>
+          
+          <!-- ら行 -->
+          <div class="kana-column">
+            <button class="kana-btn" data-kana="ら" aria-label="ら">ら</button>
+            <button class="kana-btn" data-kana="り" aria-label="り">り</button>
+            <button class="kana-btn" data-kana="る" aria-label="る">る</button>
+            <button class="kana-btn" data-kana="れ" aria-label="れ">れ</button>
+            <button class="kana-btn" data-kana="ろ" aria-label="ろ">ろ</button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+          </div>
+          
+          <!-- や行 -->
+          <div class="kana-column">
+            <button class="kana-btn" data-kana="や" aria-label="や">や</button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn" data-kana="ゆ" aria-label="ゆ">ゆ</button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn" data-kana="よ" aria-label="よ">よ</button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+          </div>
+          
+          <!-- ま行 -->
+          <div class="kana-column">
+            <button class="kana-btn" data-kana="ま" aria-label="ま">ま</button>
+            <button class="kana-btn" data-kana="み" aria-label="み">み</button>
+            <button class="kana-btn" data-kana="む" aria-label="む">む</button>
+            <button class="kana-btn" data-kana="め" aria-label="め">め</button>
+            <button class="kana-btn" data-kana="も" aria-label="も">も</button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+          </div>
+          
+          <!-- は行 -->
+          <div class="kana-column">
+            <button class="kana-btn" data-kana="は" aria-label="は">は</button>
+            <button class="kana-btn" data-kana="ひ" aria-label="ひ">ひ</button>
+            <button class="kana-btn" data-kana="ふ" aria-label="ふ">ふ</button>
+            <button class="kana-btn" data-kana="へ" aria-label="へ">へ</button>
+            <button class="kana-btn" data-kana="ほ" aria-label="ほ">ほ</button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+          </div>
+          
+          <!-- な行 -->
+          <div class="kana-column">
+            <button class="kana-btn" data-kana="な" aria-label="な">な</button>
+            <button class="kana-btn" data-kana="に" aria-label="に">に</button>
+            <button class="kana-btn" data-kana="ぬ" aria-label="ぬ">ぬ</button>
+            <button class="kana-btn" data-kana="ね" aria-label="ね">ね</button>
+            <button class="kana-btn" data-kana="の" aria-label="の">の</button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+          </div>
+          
+          <!-- た行 -->
+          <div class="kana-column">
+            <button class="kana-btn" data-kana="た" aria-label="た">た</button>
+            <button class="kana-btn" data-kana="ち" aria-label="ち">ち</button>
+            <button class="kana-btn" data-kana="つ" aria-label="つ">つ</button>
+            <button class="kana-btn" data-kana="て" aria-label="て">て</button>
+            <button class="kana-btn" data-kana="と" aria-label="と">と</button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+          </div>
+          
+          <!-- さ行 -->
+          <div class="kana-column">
+            <button class="kana-btn" data-kana="さ" aria-label="さ">さ</button>
+            <button class="kana-btn" data-kana="し" aria-label="し">し</button>
+            <button class="kana-btn" data-kana="す" aria-label="す">す</button>
+            <button class="kana-btn" data-kana="せ" aria-label="せ">せ</button>
+            <button class="kana-btn" data-kana="そ" aria-label="そ">そ</button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+          </div>
+          
+          <!-- か行 -->
+          <div class="kana-column">
+            <button class="kana-btn" data-kana="か" aria-label="か">か</button>
+            <button class="kana-btn" data-kana="き" aria-label="き">き</button>
+            <button class="kana-btn" data-kana="く" aria-label="く">く</button>
+            <button class="kana-btn" data-kana="け" aria-label="け">け</button>
+            <button class="kana-btn" data-kana="こ" aria-label="こ">こ</button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+          </div>
+          
+          <!-- あ行 -->
+          <div class="kana-column">
+            <button class="kana-btn" data-kana="あ" aria-label="あ">あ</button>
+            <button class="kana-btn" data-kana="い" aria-label="い">い</button>
+            <button class="kana-btn" data-kana="う" aria-label="う">う</button>
+            <button class="kana-btn" data-kana="え" aria-label="え">え</button>
+            <button class="kana-btn" data-kana="お" aria-label="お">お</button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+            <button class="kana-btn kana-btn-empty" disabled></button>
+          </div>
+        </div>
+        
+        <!-- Modifier Buttons -->
+        <div class="modifier-buttons">
+          <button id="dakuten-btn" class="modifier-btn" aria-label="濁音">゛</button>
+          <button id="handakuten-btn" class="modifier-btn" aria-label="半濁音">゜</button>
+          <button id="small-btn" class="modifier-btn" aria-label="小文字">小</button>
+        </div>
+        
+        <!-- Submit Button -->
+        <button id="submit-answer-btn" class="submit-btn">確定</button>
+      </div>
+    </div>
+    
+    <!-- Question Selection Modal -->
+    <div id="question-selection-modal" class="question-selection-modal hidden" role="dialog" aria-modal="true" aria-labelledby="question-selection-title">
+      <div class="question-selection-content">
+        <h2 id="question-selection-title">問題を選択</h2>
+        <div id="question-list" class="question-list"></div>
+        <button id="close-question-selection-btn" class="close-selection-btn">閉じる</button>
+      </div>
+    </div>
+    
+    <!-- Feedback Display -->
+    <div id="feedback" class="feedback hidden" role="alert" aria-live="assertive">
+      <div class="feedback-icon"></div>
+      <p class="feedback-message"></p>
+    </div>
+  </div>
+
+  <!-- JavaScript Modules -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

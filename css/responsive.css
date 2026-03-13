@@ -1,0 +1,78 @@
+/**
+ * 謎キャン2026 - Responsive Stylesheet
+ * モバイルファーストデザイン
+ */
+
+/* Mobile (320px - 767px) - デフォルトスタイル */
+/* 基本スタイルはstyles.cssで定義済み */
+
+/* Tablet (768px - 1023px) */
+@media (min-width: 768px) {
+  .app-container {
+    padding: var(--spacing-lg);
+  }
+
+  .top-section {
+    gap: var(--spacing-md);
+  }
+
+  .number-input {
+    font-size: 1.5rem;
+  }
+
+  .kana-modal-content {
+    max-width: 700px;
+  }
+
+  .kana-btn {
+    font-size: 1.5rem;
+  }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+  .app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-xl);
+  }
+
+  .top-section {
+    gap: var(--spacing-lg);
+  }
+
+  .number-input {
+    font-size: 1.8rem;
+  }
+
+  .answer-display {
+    min-height: 300px;
+  }
+
+  .answer-text {
+    font-size: 2rem;
+  }
+
+  .kana-modal-content {
+    max-width: 800px;
+  }
+
+  .kana-btn {
+    font-size: 1.8rem;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (orientation: landscape) and (max-height: 600px) {
+  .kana-modal-content {
+    max-height: 95vh;
+    padding: var(--spacing-md);
+  }
+
+  .kana-btn {
+    min-height: 40px;
+    max-height: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+}
