@@ -9,6 +9,7 @@ export class QuestionManager {
   constructor(questions) {
     this.questions = questions;
     this.currentQuestionIndex = 0;
+    this.maxVisitedIndex = 0; // 訪問した最大の問題インデックス
     this.completedRoutes = new Set(); // 完了したルートを記録
     this.answeredQuestions = new Map(); // 問題インデックス -> カタカナ答え
     this.routeFinalAnswers = new Map(); // ルート名 -> 最終問題の答え
@@ -156,6 +157,10 @@ export class QuestionManager {
   moveToNext() {
     if (this.currentQuestionIndex < this.questions.length - 1) {
       this.currentQuestionIndex++;
+      // 最大訪問インデックスを更新
+      if (this.currentQuestionIndex > this.maxVisitedIndex) {
+        this.maxVisitedIndex = this.currentQuestionIndex;
+      }
       return true;
     }
     return false;
@@ -179,6 +184,14 @@ export class QuestionManager {
    */
   getCurrentQuestionIndex() {
     return this.currentQuestionIndex;
+  }
+
+  /**
+   * 訪問した最大の問題インデックスを取得
+   * @returns {number} 訪問した最大の問題インデックス
+   */
+  getMaxVisitedIndex() {
+    return this.maxVisitedIndex;
   }
 
   /**

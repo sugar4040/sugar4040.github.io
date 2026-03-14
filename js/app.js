@@ -329,6 +329,13 @@ function handleAnswerSubmit(input) {
     const currentIndex = questionManager.getCurrentQuestionIndex();
     questionManager.saveAnswer(currentIndex, katakanaAnswer);
     
+    // ルート最終問題の場合、ルート完了をマーク
+    if (currentQuestion.isFinal && currentQuestion.route) {
+      questionManager.markRouteCompleted(currentQuestion.route);
+      console.log('Route completed on kana answer:', currentQuestion.route);
+      console.log('Completed routes:', Array.from(questionManager.completedRoutes));
+    }
+    
     const answerText = document.getElementById('answer-text');
     
     // q_finalに置き換えられたルート最終問題で、完了済みルートの答えがある場合
@@ -480,35 +487,16 @@ function handleMoveForward() {
   // numberAnswerがnullの場合（ルート最終問題）
   // ただし、q_finalに置き換えられている場合は通常の処理を行う
   if (currentQuestion.numberAnswer === null && !currentQuestion.isSubstituted) {
-    console.log('Route final question - marking route completed:', currentQuestion.route);
+    console.log('Route final question - no number answer accepted');
     
-    // ルート完了を記録
-    if (currentQuestion.route) {
-      questionManager.markRouteCompleted(currentQuestion.route);
-      console.log('Completed routes after marking:', Array.from(questionManager.completedRoutes));
-    }
-    
-    // 現在の問題を完了済みとしてマーク
-    const currentIndex = questionManager.getCurrentQuestionIndex();
-    questionManager.markQuestionCompleted(currentIndex);
-    
-    // 両ルート完了チェック
-    if (questionManager.areBothRoutesCompleted()) {
-      console.log('Both routes completed - game finished');
+    // 数字入力欄に何か入力されている場合は不正解メッセージ
+    if (numberInput.trim() !== '') {
+      showFeedback('error', '数字が正しくありません');
       return;
     }
     
-    // 片方のルートが完了した場合、q_finalに移動
-    const finalQuestionIndex = questionManager.questions.findIndex(q => q.requiresBothRoutes === true);
-    if (finalQuestionIndex !== -1) {
-      console.log('Moving to q_final at index:', finalQuestionIndex);
-      questionManager.currentQuestionIndex = finalQuestionIndex;
-      resetQuestionDisplay();
-      return;
-    }
-    
-    // q_finalが見つからない場合はエラーメッセージ
-    showFeedback('error', '戻るボタンで分岐点に戻ってください');
+    // 空の場合は戻るボタンで分岐点に戻るようメッセージ表示
+    showFeedback('error', '数字が正しくありません');
     return;
   }
   
@@ -630,13 +618,34 @@ function showQuestionSelectionModal() {
   // 問題リストをクリア
   questionList.innerHTML = '';
   
-  // 現在の問題インデックスを取得
+  // 現在の問題インデックスと訪問した最大インデックスを取得
   const currentIndex = questionManager.getCurrentQuestionIndex();
+  const maxVisitedIndex = questionManager.getMaxVisitedIndex();
   const questions = questionManager.questions;
+  const currentQuestion = questions[currentIndex];
   
-  // 現在の問題までの問題をリストに追加
-  for (let i = 0; i <= currentIndex; i++) {
+  // 現在の問題のルートを判定
+  const currentRoute = currentQuestion?.route || null;
+  
+  // 訪問した最大インデックスまでの問題をリストに追加（ただし現在のルートに属する問題のみ）
+  for (let i = 0; i <= maxVisitedIndex; i++) {
     const question = questions[i];
+    
+    // ルートフィルタリング：
+    // - 現在の問題にrouteがない場合（共通問題にいる場合）：routeがない問題のみ表示
+    // - 現在の問題にrouteがある場合：routeがない問題 + 同じルートの問題を表示
+    if (currentRoute === null) {
+      // 共通問題にいる場合は、ルート問題を表示しない
+      if (question.route) {
+        continue;
+      }
+    } else {
+      // ルート内にいる場合は、別ルートの問題を表示しない
+      if (question.route && question.route !== currentRoute) {
+        continue;
+      }
+    }
+    
     const questionItem = document.createElement('div');
     questionItem.className = 'question-item';
     
@@ -698,6 +707,11 @@ function navigateToQuestion(targetIndex) {
   // 問題インデックスを直接設定
   questionManager.currentQuestionIndex = targetIndex;
   
+  // 前進する場合は最大訪問インデックスを更新
+  if (targetIndex > questionManager.maxVisitedIndex) {
+    questionManager.maxVisitedIndex = targetIndex;
+  }
+  
   // 入力をクリア
   numberInputController.clear();
   
@@ -707,6 +721,8 @@ function navigateToQuestion(targetIndex) {
     answerText.innerHTML = '回答を入力';
     answerText.classList.remove('has-answer');
     delete answerText.dataset.answered;
+    delete answerText.dataset.routeFinal;
+    delete answerText.dataset.completedAnswer;
   }
 
   // +ボタンを非表示にする
@@ -729,34 +745,41 @@ function navigateToQuestion(targetIndex) {
     kanaSu.classList.add('disabled');
   }
 
+  // 現在の問題を取得（q_finalに置き換えられる可能性がある）
+  const currentQuestion = questionManager.getCurrentQuestion();
+  
   // 過去の問題に戻る場合は、保存された答えを復元
   if (questionManager.isAnswered(targetIndex)) {
     const savedAnswer = questionManager.getAnswer(targetIndex);
-    if (savedAnswer && answerText) {
+    
+    // q_finalに置き換えられた問題の場合は、updateQuestionDisplayで処理
+    if (currentQuestion && currentQuestion.isSubstituted) {
+      updateQuestionDisplay(currentQuestion);
+    } else if (savedAnswer && answerText) {
+      // 通常の問題の場合
       answerText.textContent = savedAnswer;
       answerText.classList.add('has-answer');
+      
+      // 「マ」「ス」ボタンを有効化
+      if (kanaMa) {
+        kanaMa.classList.remove('disabled');
+        dragDropController.makeDraggable(kanaMa, 'マ');
+      }
+      if (kanaSu) {
+        kanaSu.classList.remove('disabled');
+        dragDropController.makeDraggable(kanaSu, 'ス');
+      }
+      
+      // +ボタンを表示
+      if (separatorBtn) {
+        separatorBtn.classList.remove('hidden');
+      }
+      
+      // 答え表示エリアにクリックイベントを追加
+      setupAnswerClickHandler(savedAnswer);
     }
-    
-    // 「マ」「ス」ボタンを有効化
-    if (kanaMa) {
-      kanaMa.classList.remove('disabled');
-      dragDropController.makeDraggable(kanaMa, 'マ');
-    }
-    if (kanaSu) {
-      kanaSu.classList.remove('disabled');
-      dragDropController.makeDraggable(kanaSu, 'ス');
-    }
-    
-    // +ボタンを表示
-    if (separatorBtn) {
-      separatorBtn.classList.remove('hidden');
-    }
-    
-    // 答え表示エリアにクリックイベントを追加
-    setupAnswerClickHandler(savedAnswer);
   } else {
     // 未回答の問題の場合は通常の表示
-    const currentQuestion = questionManager.getCurrentQuestion();
     if (currentQuestion) {
       updateQuestionDisplay(currentQuestion);
     }
@@ -772,14 +795,35 @@ function navigateToQuestion(targetIndex) {
 function updateNavigationButtons() {
   const moveBackBtn = document.getElementById('move-back-btn');
   const currentIndex = questionManager.getCurrentQuestionIndex();
+  const questions = questionManager.questions;
+  const currentQuestion = questions[currentIndex];
+  const currentRoute = currentQuestion?.route || null;
   
   if (moveBackBtn) {
-    // 最初の問題の場合は戻るボタンを無効化
-    if (currentIndex === 0) {
-      moveBackBtn.disabled = true;
-    } else {
-      moveBackBtn.disabled = false;
+    // 戻れる問題があるかチェック
+    let hasAccessibleQuestions = false;
+    
+    for (let i = 0; i < currentIndex; i++) {
+      const question = questions[i];
+      
+      // ルートフィルタリングと同じロジック
+      if (currentRoute === null) {
+        // 共通問題にいる場合は、ルート問題を除外
+        if (!question.route) {
+          hasAccessibleQuestions = true;
+          break;
+        }
+      } else {
+        // ルート内にいる場合は、共通問題 + 同じルートの問題
+        if (!question.route || question.route === currentRoute) {
+          hasAccessibleQuestions = true;
+          break;
+        }
+      }
     }
+    
+    // 戻れる問題がない場合は戻るボタンを無効化
+    moveBackBtn.disabled = !hasAccessibleQuestions;
   }
 }
 
