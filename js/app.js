@@ -214,11 +214,31 @@ function updateQuestionDisplay(question) {
     if (completedAnswer) {
       // 完了済みルートの最終問題の答えを表示
       if (answerText) {
-        answerText.textContent = completedAnswer;
+        answerText.innerHTML = '';
+        
+        // 完了済み答えを個別文字に分割してドラッグ可能にする
+        completedAnswer.split('').forEach((char) => {
+          const charSpan = document.createElement('span');
+          charSpan.className = 'clickable-answer-char';
+          charSpan.dataset.kana = char;
+          charSpan.setAttribute('role', 'button');
+          charSpan.setAttribute('tabindex', '0');
+          charSpan.setAttribute('aria-label', `${char}をドラッグして数字入力欄に追加`);
+          charSpan.textContent = char;
+          answerText.appendChild(charSpan);
+        });
+        
         answerText.classList.add('has-answer');
         // ルート最終問題フラグを設定（50音入力を許可するため）
         answerText.dataset.routeFinal = 'true';
         answerText.dataset.completedAnswer = completedAnswer;
+        
+        // 各文字をドラッグ可能にする
+        const clickableChars = answerText.querySelectorAll('.clickable-answer-char');
+        clickableChars.forEach((charElement) => {
+          const kana = charElement.dataset.kana;
+          dragDropController.makeDraggable(charElement, kana);
+        });
       }
       
       // 「マ」「ス」ボタンを有効化
@@ -239,8 +259,6 @@ function updateQuestionDisplay(question) {
         separatorBtn.classList.remove('hidden');
       }
       
-      // 答え表示エリアにクリックイベントを追加
-      setupAnswerClickHandler(completedAnswer);
       return;
     }
   }
