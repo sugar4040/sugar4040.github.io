@@ -208,9 +208,22 @@ function setupInitialDisplay(config) {
 function updateQuestionDisplay(question) {
   const answerText = document.getElementById('answer-text');
   
-  // ルート最終問題で、片方のルートが完了している場合
-  if (question.isFinal && question.route && !questionManager.areBothRoutesCompleted()) {
+  console.log('updateQuestionDisplay called:', {
+    questionId: question.id,
+    originalId: question.originalId,
+    isSubstituted: question.isSubstituted,
+    isFinal: question.isFinal,
+    route: question.route,
+    requiresBothRoutes: question.requiresBothRoutes,
+    bothRoutesCompleted: questionManager.areBothRoutesCompleted(),
+    completedRoutes: Array.from(questionManager.completedRoutes),
+    routeFinalAnswers: Array.from(questionManager.routeFinalAnswers.entries())
+  });
+  
+  // q_finalに置き換えられたルート最終問題で、片方のルートが完了している場合
+  if (question.isSubstituted && !questionManager.areBothRoutesCompleted()) {
     const completedAnswer = questionManager.getCompletedRouteFinalAnswer();
+    console.log('Checking for completed route answer in substituted q_final:', completedAnswer);
     if (completedAnswer) {
       // 完了済みルートの最終問題の答えを表示
       if (answerText) {
@@ -318,8 +331,8 @@ function handleAnswerSubmit(input) {
     
     const answerText = document.getElementById('answer-text');
     
-    // ルート最終問題で、完了済みルートの答えがある場合
-    if (currentQuestion.isFinal && currentQuestion.route && answerText && answerText.dataset.routeFinal === 'true') {
+    // q_finalに置き換えられたルート最終問題で、完了済みルートの答えがある場合
+    if (currentQuestion.isSubstituted && answerText && answerText.dataset.routeFinal === 'true') {
       const completedAnswer = answerText.dataset.completedAnswer;
       // 「完了済み答え/現在の答え」の形式で表示
       const combinedAnswer = `${completedAnswer}／${katakanaAnswer}`;
@@ -465,28 +478,37 @@ function handleMoveForward() {
   const numberInput = numberInputController.getValue();
   
   // numberAnswerがnullの場合（ルート最終問題）
-  if (currentQuestion.numberAnswer === null) {
+  // ただし、q_finalに置き換えられている場合は通常の処理を行う
+  if (currentQuestion.numberAnswer === null && !currentQuestion.isSubstituted) {
+    console.log('Route final question - marking route completed:', currentQuestion.route);
+    
     // ルート完了を記録
     if (currentQuestion.route) {
       questionManager.markRouteCompleted(currentQuestion.route);
+      console.log('Completed routes after marking:', Array.from(questionManager.completedRoutes));
     }
     
     // 現在の問題を完了済みとしてマーク
     const currentIndex = questionManager.getCurrentQuestionIndex();
     questionManager.markQuestionCompleted(currentIndex);
     
-    // 両方のルートが完了している場合は最終問題へ
+    // 両ルート完了チェック
     if (questionManager.areBothRoutesCompleted()) {
-      const finalQuestionIndex = questionManager.questions.findIndex(q => q.requiresBothRoutes === true);
-      if (finalQuestionIndex !== -1) {
-        questionManager.currentQuestionIndex = finalQuestionIndex;
-        resetQuestionDisplay();
-        return;
-      }
+      console.log('Both routes completed - game finished');
+      return;
     }
     
-    // まだ片方のルートしか完了していない場合
-    showFeedback('error', '数字が正しくありません');
+    // 片方のルートが完了した場合、q_finalに移動
+    const finalQuestionIndex = questionManager.questions.findIndex(q => q.requiresBothRoutes === true);
+    if (finalQuestionIndex !== -1) {
+      console.log('Moving to q_final at index:', finalQuestionIndex);
+      questionManager.currentQuestionIndex = finalQuestionIndex;
+      resetQuestionDisplay();
+      return;
+    }
+    
+    // q_finalが見つからない場合はエラーメッセージ
+    showFeedback('error', '戻るボタンで分岐点に戻ってください');
     return;
   }
   
@@ -548,21 +570,13 @@ function resetQuestionDisplay() {
   // 入力をクリア
   numberInputController.clear();
   
-  // 答え表示エリアをリセット
-  const answerText = document.getElementById('answer-text');
-  if (answerText) {
-    answerText.innerHTML = '回答を入力';
-    answerText.classList.remove('has-answer');
-    delete answerText.dataset.answered;
-  }
-
-  // +ボタンを非表示にする
+  // +ボタンを非表示にする（updateQuestionDisplayで必要に応じて表示される）
   const separatorBtn = document.getElementById('add-separator-btn');
   if (separatorBtn) {
     separatorBtn.classList.add('hidden');
   }
 
-  // 「マ」「ス」ボタンの状態をリセット
+  // 「マ」「ス」ボタンの状態をリセット（updateQuestionDisplayで必要に応じて有効化される）
   const kanaMa = document.getElementById('kana-ma');
   const kanaSu = document.getElementById('kana-su');
   if (kanaMa) {
@@ -576,7 +590,17 @@ function resetQuestionDisplay() {
     kanaSu.classList.add('disabled');
   }
 
-  // 新しい問題を表示
+  // 答え表示エリアをリセット（updateQuestionDisplayの前に）
+  const answerText = document.getElementById('answer-text');
+  if (answerText) {
+    answerText.innerHTML = '回答を入力';
+    answerText.classList.remove('has-answer');
+    delete answerText.dataset.answered;
+    delete answerText.dataset.routeFinal;
+    delete answerText.dataset.completedAnswer;
+  }
+
+  // 新しい問題を表示（ルート最終問題の場合は特別な処理が行われる）
   const currentQuestion = questionManager.getCurrentQuestion();
   if (currentQuestion) {
     updateQuestionDisplay(currentQuestion);

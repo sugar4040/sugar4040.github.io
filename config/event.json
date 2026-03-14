@@ -139,7 +139,7 @@
       "id": "q_final",
       "question": "最終問題",
       "answer": "special",
-      "numberAnswer": ["マイナスセン+イレブン", "イレブン+マイナスセン"],
+      "numberAnswer": ["マイナスセン+イレブン", "イレブン+マイナスセン", "イレブンマイナスセン"],
       "requiresBothRoutes": true,
       "hint": "最終問題のヒント"
     }

@@ -37,11 +37,21 @@ export class QuestionManager {
    * @param {string} katakanaAnswer - カタカナの答え
    */
   saveAnswer(questionIndex, katakanaAnswer) {
+    console.log('saveAnswer called:', {
+      questionIndex,
+      katakanaAnswer,
+      questionId: this.questions[questionIndex]?.id
+    });
+    
     this.answeredQuestions.set(questionIndex, katakanaAnswer);
     
     // ルート最終問題の場合は、ルート別に保存
     const question = this.questions[questionIndex];
     if (question && question.isFinal && question.route) {
+      console.log('Saving route final answer:', {
+        route: question.route,
+        answer: katakanaAnswer
+      });
       this.routeFinalAnswers.set(question.route, katakanaAnswer);
     }
   }
@@ -69,14 +79,22 @@ export class QuestionManager {
    * @returns {string|null} 完了済みルートの最終問題の答え、またはnull
    */
   getCompletedRouteFinalAnswer() {
+    console.log('getCompletedRouteFinalAnswer called:', {
+      completedRoutes: Array.from(this.completedRoutes),
+      routeFinalAnswers: Array.from(this.routeFinalAnswers.entries())
+    });
+    
     // route1が完了していればroute1の答えを返す
     if (this.completedRoutes.has('route1') && this.routeFinalAnswers.has('route1')) {
+      console.log('Returning route1 answer:', this.routeFinalAnswers.get('route1'));
       return this.routeFinalAnswers.get('route1');
     }
     // route2が完了していればroute2の答えを返す
     if (this.completedRoutes.has('route2') && this.routeFinalAnswers.has('route2')) {
+      console.log('Returning route2 answer:', this.routeFinalAnswers.get('route2'));
       return this.routeFinalAnswers.get('route2');
     }
+    console.log('No completed route answer found');
     return null;
   }
 
@@ -103,7 +121,30 @@ export class QuestionManager {
    */
   getCurrentQuestion() {
     if (this.currentQuestionIndex >= 0 && this.currentQuestionIndex < this.questions.length) {
-      return this.questions[this.currentQuestionIndex];
+      const question = this.questions[this.currentQuestionIndex];
+      
+      // ルート最終問題で、片方のルートが完了している場合、q_finalとして扱う
+      if (question.isFinal && question.route) {
+        const otherRoute = question.route === 'route1' ? 'route2' : 'route1';
+        if (this.completedRoutes.has(otherRoute)) {
+          // q_finalを探す
+          const qFinal = this.questions.find(q => q.requiresBothRoutes === true);
+          if (qFinal) {
+            // q_finalの内容で現在の問題を上書き
+            // ただし、answerは元のルート最終問題の答えを使用
+            return {
+              ...qFinal,
+              answer: question.answer, // 元のルート最終問題の答えを使用
+              isFinal: question.isFinal,
+              route: question.route,
+              originalId: question.id,
+              isSubstituted: true // q_finalに置き換えられたことを示すフラグ
+            };
+          }
+        }
+      }
+      
+      return question;
     }
     return null;
   }
